@@ -16,17 +16,20 @@ FetchContent_Declare(
     GIT_TAG        e2239ee6043f73722e7aa812a459f54a28552929 # release-1.11.0
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-FetchContent_GetProperties(googletest)
-if (NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
+FetchContent_Declare(
+  Cathc2
+    # Specify the commit you depend on and update it regularly.
+    GIT_REPOSITORY https://github.com/catchorg/Catch2
+    GIT_TAG        c4e3767e265808590986d5db6ca1b5532a7f3d13# release-2.13.7
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+# set(catch2_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(Cathc2)
 
-    # Perform arbitrary actions on the googletest project
 
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-endif()
 
 add_executable(
     ${PROJECT_NAME} 
@@ -34,18 +37,34 @@ add_executable(
     )
 
 add_executable(
-    ${TEST_NAME}
-    test.cpp
+    google_test
+    test_google.cpp
     )
 
 
 target_link_libraries(
-    ${TEST_NAME}  
+    google_test
     gtest_main
     pthread
     )
 
+
+add_executable(
+    catch2_test
+    catch2.cpp
+    )
+
+target_link_libraries(
+    catch2_test
+    Catch2::Catch2
+    )
+
 add_test(
-    NAME ${TEST_NAME}
-    COMMAND ${TEST_NAME}
+    NAME catch2_test
+    COMMAND catch2_test
+)
+
+add_test(
+    NAME google_test
+    COMMAND google_test
 )
